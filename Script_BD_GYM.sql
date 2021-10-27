@@ -29,3 +29,16 @@ CREATE OR REPLACE FUNCTION buscar_Persona(id int) RETURNS varchar AS $$
                 
         END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION mostrar_Persona() RETURNS varchar AS $$
+
+        BEGIN
+
+		 SELECT * FROM PERSONA;
+
+		IF NOT FOUND THEN
+			RAISE 'No existen registros';
+		END IF;	
+                
+        END;
+$$ LANGUAGE plpgsql;
