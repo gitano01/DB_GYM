@@ -1,44 +1,50 @@
-CREATE OR REPLACE FUNCTION insertar_Persona(nombre varchar, apellido varchar, correo varchar) RETURNS void AS $$
-
+CREATE OR REPLACE FUNCTION insertarPersona(nombre varchar, apellido varchar, email varchar) RETURNS varchar AS $$
         BEGIN
-
-		INSERT INTO Persona(nombres,apellidos,email) values(nombre,apellido,correo);
-                
+			INSERT INTO Persona(nombre,apellido,correo) values(nombre,apellido,email);
+			RETURN 'Inserción correcta';
         END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION modificar_Persona(id int,nombre varchar, apellido varchar, correo varchar) RETURNS void AS $$
-
+CREATE OR REPLACE FUNCTION modificarPersona(identificador integer,nombre varchar, apellido varchar, correo varchar) RETURNS varchar AS $$
         BEGIN
-
-		UPDATE  Persona SET Persona.nombres = nombre, Persona.apellidos = apellido, Persona.email = correo  WHERE Persona.id = id;
-                
-        END;
-$$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION buscar_Persona(id int) RETURNS varchar AS $$
-
-        BEGIN
-
-		 SELECT * FROM PERSONA WHERE Persona.id = id;
-
-		IF NOT FOUND THEN
-			RAISE 'No se encontro informacion de la persona';
+			UPDATE  persona SET nombre = $2, apellido = $3, correo = $4  WHERE persona.identificador = $1;
+        	IF NOT FOUND THEN
+				RAISE 'No existen registros, verifique el identificador';
 		END IF;	
-                
-        END;
+			RETURN 'Actualizacion correcta';
+		END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION mostrar_Persona() RETURNS varchar AS $$
-
-        BEGIN
-
-		 SELECT * FROM PERSONA;
+CREATE OR REPLACE FUNCTION buscarPersona(ide integer) RETURNS SETOF persona AS 
+$BODY$     
+	DECLARE
+		reg RECORD;
+	BEGIN
+		FOR REG IN SELECT * FROM persona WHERE persona.identificador = $1 LOOP RETURN NEXT reg;
+		END LOOP;
 
 		IF NOT FOUND THEN
 			RAISE 'No existen registros';
 		END IF;	
-                
-        END;
-$$ LANGUAGE plpgsql;
+
+	END	
+$BODY$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION mostrarPersonas() RETURNS SETOF persona AS 
+$BODY$     
+	DECLARE
+		reg RECORD;
+	BEGIN
+		FOR REG IN SELECT * FROM persona LOOP RETURN NEXT reg;
+		END LOOP;
+
+		IF NOT FOUND THEN
+			RAISE 'No existen registros';
+		END IF;	
+
+	END	
+$BODY$ LANGUAGE 'plpgsql';
+
+
+victor 12
